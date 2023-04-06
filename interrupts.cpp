@@ -14,11 +14,23 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt){
 
     SetInterruptDescriptorTableEntry(0, CodeSegment, &interrput_handler_0, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(1, CodeSegment, &interrput_handler_1, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(2, CodeSegment, &interrput_handler_2, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(3, CodeSegment, &interrput_handler_3, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(4, CodeSegment, &interrput_handler_4, 0, IDT_INTERRUPT_GATE);
+
+    InterruptDescriptorTablePointer idt;
+    idt.base = (uint32_t) InterruptDescriptorTable;
+    idt.size = 256 * sizeof(GateDescriptor) - 1;
+
+    //告诉cpu idt的位子
+    asm volatile("lidt %0" : : "m" (idt));
 }
 
 InterruptManager::~InterruptManager(){}
 
-
+void InterruptManager::Activete(){
+    asm("sti");
+}
 
 void InterruptManager::SetInterruptDescriptorTableEntry(
         uint8_t interruptNumber,

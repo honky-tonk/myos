@@ -1,8 +1,9 @@
 #include "types.h"
 #include "gdt.h"
+#include "interrupts.h"
 
 
-extern void printf(const char* str){
+void printf(char* str){
     volatile char * videomemory = (volatile char*) 0xB8000;
 
     while( *str != '\0' ){
@@ -16,6 +17,9 @@ extern "C" void KernelMain(){ //因为Cpp会把函数名改成XXX::KernelMain，
     printf("hello world!");
     
     GlobalDescriptorTable gdt;
-    
+    InterruptManager interrupts(&gdt); //idt
+
+    //active interrupt
+    interrupts.Activete();
     while(1);
 }
